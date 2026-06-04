@@ -8,7 +8,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: '*',
+    origin: 'https://meeting-room-booking-frontend.onrender.com',
     credentials: true
   })
 
