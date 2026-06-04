@@ -14,7 +14,7 @@ import { BookingModule } from './booking/booking.module';
 })
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).exclude('auth/login', 'admin/create-user').forRoutes('*');  
+    consumer.apply(AuthenticationMiddleware).exclude('auth/login', 'admin/create-user', 'admin/create-admin').forRoutes('*');  
   }
 }
 
