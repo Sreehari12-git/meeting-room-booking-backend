@@ -15,6 +15,11 @@ export class UsersController {
     return this.usersService.createUser(body);
   }
 
+  @Post("create-admin")
+  createAdmin(@Body() body: CreateUserDto) {
+    return this.usersService.createAdmin(body);
+  }
+
   @Get("get-all")
   getAllUser() {
     return this.usersService.getAllUsers();

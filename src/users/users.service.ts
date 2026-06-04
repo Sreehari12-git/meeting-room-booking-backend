@@ -37,6 +37,34 @@ export class UsersService {
         }
     }
 
+    async createAdmin(data: CreateUserDto) {
+        const existingAdmin = await this.prisma.user.findUnique({
+            where: {
+                email: data.email
+            }
+        })
+
+        if(existingAdmin) {
+            throw new BadRequestException("Admin already exists");
+        }
+
+        const hashPassword = await bcrypt.hash(data.password,10);
+
+        const admin = await this.prisma.user.create({
+            data: {
+                name: data.name,
+                email: data.email,
+                password: hashPassword,
+                role: data.role
+            }
+        })
+
+        return {
+            message: "Admin created successfully",
+            admin
+        }
+    }
+
     async getAllUsers() {
         const users = await this.prisma.user.findMany( {
             where: {
