@@ -16,13 +16,15 @@ export class AuthController {
         );
         res.cookie("token", result.token, {
             httpOnly: true,
-            secure: false,
+            secure: true,
+            sameSite:  "none",
             maxAge: 2 * 60 * 60 * 1000
         })
 
         res.cookie("refreshtoken",result.refreshToken, {
             httpOnly: true,
-            secure: false,
+            secure: true,
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
