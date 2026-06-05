@@ -6,11 +6,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(cookieParser());
-const allowedOrigins = process.env.ALLOWORIGINLIST 
-  ? process.env.ALLOWORIGINLIST.split(',') 
-  : 'https://meeting-room-booking-frontend.onrender.com';
+  const allowedOrigins = process.env.ALLOWORIGINLIST ?? true ;
+
     app.enableCors({
-      origin: allowedOrigins,
+      origin: "https://meeting-room-booking-frontend.onrender.com",
       credentials: true,
     });
 
