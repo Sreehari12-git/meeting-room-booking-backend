@@ -2,12 +2,14 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import bcrypt from "bcrypt"
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class UsersService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, @InjectPinoLogger(UsersService.name) private readonly logger: PinoLogger) {}
 
-    async createUser(data: CreateUserDto) {        
+    async createUser(data: CreateUserDto) {     
+        this.logger.info({email : data.email}, "Creating user started"); 
         const existingUser = await this.prisma.user.findUnique({
             where: {
                 email : data.email
@@ -15,6 +17,7 @@ export class UsersService {
         })
 
         if(existingUser) {
+            this.logger.warn({email: data.email}, "User already exists")
             throw new BadRequestException("User already exists");
         }
 
@@ -29,6 +32,10 @@ export class UsersService {
             }
         });
 
+        this.logger.info({
+            userId: user.id, email: user.email
+        }, "User created successfully")
+
         return {
             message: "User created successfully",
             user
@@ -36,6 +43,7 @@ export class UsersService {
     }
 
     async createAdmin(data: CreateUserDto) {
+        this.logger.info({email : data.email}, "Admin created successfully");
         const existingAdmin = await this.prisma.user.findUnique({
             where: {
                 email: data.email
@@ -43,6 +51,7 @@ export class UsersService {
         })
 
         if(existingAdmin) {
+            this.logger.warn({email: data.email}, "Admin already exists")
             throw new BadRequestException("Admin already exists");
         }
 
@@ -57,6 +66,10 @@ export class UsersService {
             }
         })
 
+        this.logger.info({
+            userId: admin.id, email: admin.email
+        }, "Admin created successfully")
+
         return {
             message: "Admin created successfully",
             admin
@@ -64,6 +77,7 @@ export class UsersService {
     }
 
     async getAllUsers() {
+        this.logger.debug('Fetching all users')
         const users = await this.prisma.user.findMany( {
             where: {
                 role: "EMPLOYEE"
@@ -75,10 +89,12 @@ export class UsersService {
                 role: true
             }
         });
+        this.logger.info({count: users.length}, "Rooms fetched")
         return users;
     }
 
     async deleteUser(email: string) {
+        this.logger.info({email}, "Delete user request received")
         const existingUser = await this.prisma.user.findUnique({
             where: {
                 email
@@ -86,6 +102,7 @@ export class UsersService {
         })
 
         if(!existingUser) {
+            this.logger.warn({email}, "User not found for deletion")
             throw new NotFoundException("User not found");
         }
 
@@ -94,12 +111,16 @@ export class UsersService {
                 email
             }
         })
+
+        this.logger.info({email},"User deleted successfully");
+        
         return {
             message: "User deleted successfully"
         }
     }
 
     async updateUser(email: string, data: any) {
+        this.logger.info({email}, "User updated successfully");
         const existingUser = await this.prisma.user.findUnique({
             where: {
                 email
@@ -107,6 +128,7 @@ export class UsersService {
         })
 
         if(!existingUser) {
+            this.logger.warn("User not found for update");
             throw new NotFoundException("User not found");
         }
 
@@ -122,6 +144,8 @@ export class UsersService {
 
         })
 
+        this.logger.info({email}, "User updated successfully")
+
         return {
             message: "User updated successfully",
             updatedUser
@@ -129,6 +153,7 @@ export class UsersService {
     }
 
     async createRooms(data: any) {
+        this.logger.info({roomName: data.name}, "Creating room")
         const room = await this.prisma.room.create({
             data: {
                 name: data.name,
@@ -138,6 +163,8 @@ export class UsersService {
             }
         })
 
+         this.logger.info({ roomId: room.id }, 'Room created');
+
         return {
             message: "Room created successfully",
             room
@@ -145,6 +172,7 @@ export class UsersService {
     }
 
     async getRooms() {
+        this.logger.debug("Fetching all rooms")
         const room = await this.prisma.room.findMany({
             select: {
                 id: true,
@@ -154,10 +182,12 @@ export class UsersService {
                 Amenities: true
             }
         })
+        this.logger.info({ count: room.length }, 'Rooms fetched');
         return room;
     }
 
     async deleteRooms(name: string) {
+        this.logger.info({ name }, 'Delete room request');
         const existingRoom = await this.prisma.room.findUnique({
             where: {
                 name
@@ -165,6 +195,7 @@ export class UsersService {
         })
 
         if(!existingRoom) {
+            this.logger.warn({ name }, 'Room not found');
             throw new NotFoundException("Room not found")
         }
 
@@ -174,12 +205,15 @@ export class UsersService {
             }
         })
 
+         this.logger.info({ name }, 'Room deleted');
+
         return {
             message : "Room deleted successfully"
         }
     }
 
     async updateRooms(name: string, data: any) {
+        this.logger.info({name}, "Room is updated successfully")
         const existingRoom = await this.prisma.room.findUnique({
             where: {
                 name
@@ -187,6 +221,7 @@ export class UsersService {
         })
 
         if(!existingRoom) {
+            this.logger.warn({name}, "Room not found");
             throw new NotFoundException("Room not found")
         }
 
@@ -201,6 +236,8 @@ export class UsersService {
                 Amenities: data.amenities
             }
         })
+
+        this.logger.info({name}, "Room updated")
 
         return {
             message: "Room updated successfully",updateRoom
