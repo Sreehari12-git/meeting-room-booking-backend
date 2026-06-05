@@ -14,17 +14,19 @@ export class AuthController {
             body.email,
             body.password
         );
+        const isProduction = process.env.NODE_ENV === 'production';
+        
         res.cookie("token", result.token, {
             httpOnly: true,
-            secure: true,
-            sameSite:  "none",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             maxAge: 2 * 60 * 60 * 1000
         })
 
-        res.cookie("refreshtoken",result.refreshToken, {
+        res.cookie("refreshToken", result.refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
@@ -33,8 +35,17 @@ export class AuthController {
 
     @Post("logout")
     async logout(@Res({passthrough : true}) res: Response) {
-        res.clearCookie("token");
-        res.clearCookie("refreshtoken")
+        const isProduction = process.env.NODE_ENV === 'production';
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax"
+        });
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax"
+        });
         return {
             message: "Logged out successfully"
         }
@@ -65,10 +76,11 @@ export class AuthController {
                 }
             );
 
+            const isProduction = process.env.NODE_ENV === 'production';
             res.cookie("token", newAccessToken, {
                 httpOnly: true,
-                secure: true,
-                sameSite: "none",
+                secure: isProduction,
+                sameSite: isProduction ? "none" : "lax",
                 maxAge: 2 * 60 * 60 * 1000
             });
 
