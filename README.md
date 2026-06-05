@@ -1,98 +1,153 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Meeting Room Booking System - Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust and scalable NestJS backend API built for managing meeting rooms, employee bookings, and user administration. It features JWT-based cookie authentication, PostgreSQL database management using Prisma ORM, strict input validation, and comprehensive logging.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🚀 Tech Stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Framework:** [NestJS (v11.x)](https://nestjs.com/)
+- **ORM:** [Prisma (v6.x)](https://www.prisma.io/)
+- **Database:** PostgreSQL
+- **Authentication:** JWT with HttpOnly cookies (`cookie-parser`)
+- **Logging:** [Pino](https://github.com/pinojs/pino) (`nestjs-pino` & `pino-http`)
+- **API Documentation:** [Swagger OpenAPI](https://swagger.io/)
+- **Validation:** `class-validator` & `class-transformer`
 
-## Project setup
+---
 
-```bash
-$ npm install
+## 🛠️ Project Setup
+
+### 📋 Prerequisites
+
+Ensure you have the following installed:
+- **Node.js** (v18.x or higher recommended)
+- **npm** (v9.x or higher)
+- **PostgreSQL** database instance (local or hosted)
+
+### 💻 Installation
+
+1. Navigate to the backend directory:
+   ```bash
+   cd MR-backend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+### ⚙️ Environment Configuration
+
+Create a `.env` file in the root of the `MR-backend` directory and configure the following environment variables:
+
+```env
+# PostgreSQL connection string
+DATABASE_URL="postgresql://username:password@localhost:5432/database_name?schema=public"
+
+# Application running port
+PORT=5000
+
+# Authentication secrets
+JWT_SECRET="your-secure-access-token-secret"
+JWT_REFRESH_SECRET="your-secure-refresh-token-secret"
+
+# Allowed CORS origins (separate multiple origins with commas if necessary)
+ALLOWORIGINLIST="http://localhost:5173"
 ```
 
-## Compile and run the project
+### 🗄️ Database Setup & Migrations
+
+Prisma schema is defined in [prisma/schema.prisma](file:///c:/MeetingRoom/MR-backend/prisma/schema.prisma). Run the following commands to apply migrations and generate the client:
 
 ```bash
-# development
-$ npm run start
+# Apply migrations to PostgreSQL and create tables
+npx prisma migrate dev
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Generate Prisma Client
+npx prisma generate
 ```
 
-## Run tests
+---
+
+## 🏃 Running the Application
+
+| Command | Description |
+| :--- | :--- |
+| `npm run start` | Starts the application |
+| `npm run start:dev` | Starts the application in development watch mode |
+| `npm run start:prod` | Starts the production bundle (`dist/src/main.js`) |
+| `npm run build` | Compiles the NestJS code into Javascript (`dist/` folder) |
+
+---
+
+## 🧪 Running Tests
 
 ```bash
-# unit tests
-$ npm run test
+# Unit tests
+npm run test
 
-# e2e tests
-$ npm run test:e2e
+# End-to-end (e2e) tests
+npm run test:e2e
 
-# test coverage
-$ npm run test:cov
+# Test coverage
+npm run test:cov
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 📖 API Documentation (Swagger)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+When the server is running, the interactive Swagger API documentation is available at:
+👉 **[http://localhost:5000/api](http://localhost:5000/api)** (Replace `5000` with your configured `PORT`)
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+---
+
+## 🛠️ API Endpoints Summary
+
+### 🔑 Authentication (`/auth`)
+- **`POST /auth/login`**: Authenticates user and sets HttpOnly cookies (`token` and `refreshToken`).
+- **`POST /auth/logout`**: Logs out the user and clears authentication cookies.
+- **`POST /auth/refresh`**: Generates a new access token using the refresh token.
+- **`GET /auth/me`**: Returns the current logged-in user profile (Requires authentication).
+
+### 👥 User & Room Administration (`/admin`)
+*All routes except `create-admin` require `ADMIN` role.*
+- **`POST /admin/create-user`**: Creates a new User (`ADMIN` or `EMPLOYEE`).
+- **`POST /admin/create-admin`**: Creates an initial Admin account.
+- **`GET /admin/get-all`**: Fetches all users.
+- **`PUT /admin/user/:email`**: Updates user details.
+- **`DELETE /admin/user/:email`**: Deletes a user by email.
+- **`POST /admin/create-rooms`**: Creates a new meeting room.
+- **`GET /admin/get-rooms`**: Fetches all meeting rooms.
+- **`PUT /admin/room/:name`**: Updates room details by name.
+- **`DELETE /admin/room/:name`**: Deletes a room by name.
+
+### 📅 Booking Management (`/booking`)
+*Requires `EMPLOYEE` role.*
+- **`POST /booking/check-availability`**: Checks if a room is available for a given time range.
+- **`POST /booking/book-room`**: Books a meeting room.
+- **`GET /booking/upcoming`**: Retrieves list of upcoming bookings for the logged-in employee.
+- **`GET /booking/history`**: Retrieves booking history for the logged-in employee.
+- **`PUT /booking/:id`**: Cancels an active booking by ID.
+
+---
+
+## 🗂️ Project Directory Structure
+
+```text
+MR-backend/
+├── prisma/                 # Prisma schema and migrations
+│   ├── schema.prisma       # Database models (User, Room, Booking)
+│   └── migrations/         # SQL migration scripts
+├── src/
+│   ├── auth/               # Authentication module, guards, and middleware
+│   ├── booking/            # Booking module, services, controllers, and DTOs
+│   ├── prisma/             # Database connection module
+│   ├── users/              # User/Admin module, services, and controllers
+│   ├── main.ts             # Application entry point & configuration
+│   └── app.module.ts       # Root module defining middleware and imports
+├── test/                   # E2E test suites
+├── tsconfig.json           # TypeScript configuration
+└── package.json            # Scripts & dependencies definition
 ```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
