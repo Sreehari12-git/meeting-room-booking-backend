@@ -3,12 +3,17 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import type { Request,Response } from 'express';
 import jwt from "jsonwebtoken"
+import { ApiBody, ApiCookieAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) {}
 
     @Post("login") 
+    @ApiOperation({ summary: 'Login user' })
+    @ApiBody({ type: LoginDto })
+    @ApiResponse({status: 200,description: 'Login successful',})
+    @ApiResponse({status: 401,description: 'Invalid credentials'})
     async login(@Body() body: LoginDto, @Res({ passthrough: true }) res: Response){
         const result = await  this.authService.login(
             body.email,
@@ -33,7 +38,10 @@ export class AuthController {
         return result
     }
 
+
     @Post("logout")
+    @ApiOperation({ summary: 'Logout user' })
+    @ApiResponse({status: 200,description: 'Logged out successfully'})
     async logout(@Res({passthrough : true}) res: Response) {
         const isProduction = process.env.NODE_ENV === 'production';
         res.clearCookie("token", {
@@ -52,6 +60,10 @@ export class AuthController {
     }
 
     @Post("refresh")
+    @ApiOperation({ summary: 'Generate new access token using refresh token' })
+    @ApiCookieAuth()
+    @ApiResponse({status: 200,description: 'Access token refreshed'})
+    @ApiResponse({status: 401,description: 'Invalid or missing refresh token'})
     async refresh (@Req() req: Request, @Res({passthrough: true}) res: Response) {
         const refreshToken = req.cookies.refreshToken;
 
@@ -94,6 +106,10 @@ export class AuthController {
     }   
 
     @Get('me')
+    @ApiOperation({ summary: 'Get current logged in user' })
+    @ApiCookieAuth()
+    @ApiResponse({status: 200,description: 'Current user details',})
+    @ApiResponse({status: 401,description: 'Unauthorized'})
     getMe(@Req() req: Request) {
         return req["user"];
     }
