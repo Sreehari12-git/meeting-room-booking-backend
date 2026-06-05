@@ -6,9 +6,10 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthenticationMiddleware } from './auth/middleware/authentication.middleware';
 import { BookingModule } from './booking/booking.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, BookingModule],
+  imports: [PrismaModule, UsersModule, AuthModule, BookingModule, LoggerModule.forRoot()],
   controllers: [AppController],
   providers: [AppService],
 })
