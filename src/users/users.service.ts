@@ -237,6 +237,21 @@ export class UsersService {
             }
         })
 
+        if(data.status === "MAINTANENCE") {
+            await this.prisma.booking.updateMany({
+                where: {
+                    roomId: existingRoom.id,
+                    startTime: {
+                        gte: new Date()
+                    }
+                },
+                data: {
+                    status: "CANCELED"
+                }
+            })
+            this.logger.info({name}, "All upcoming bookings cancelled due to maintenance")
+        }
+
         this.logger.info({name}, "Room updated")
 
         return {
