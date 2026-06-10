@@ -48,4 +48,13 @@ export class BookingController {
     cancelBooking(@Param("id") id: string, @Req() req: Request) {
         return this.bookingService.cancelBooking(Number(id),  req["user"].id);
   }
+
+  @Get("all-bookings") @Roles(Role.ADMIN)
+  @ApiOperation({summary: "All bookings"})
+  @ApiResponse({status: 200,description: 'All bookings fetched successfully'})
+  @ApiResponse({status: 404, description: "Bookings are not found"})
+  getAllBookings() {
+    return this.bookingService.getAllBookings();
+  }
+
 }

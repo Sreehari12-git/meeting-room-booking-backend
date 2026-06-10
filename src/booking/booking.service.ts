@@ -135,6 +135,17 @@ export class BookingService {
         }); 
     }
 
+    async getAllBookings() {
+        this.logger.debug("Fetching  all bookings")
+        const bookings = await this.prisma.booking.findMany({
+            include: {
+                room: true,
+                user: true
+            }
+        })
+        this.logger.info({ count: bookings.length }, "All bookings fetched")
+    }
+
     async cancelBooking(bookingId: number,userId: number) {
         this.logger.info({bookingId, userId}, 'Booking cancellation requested')
         const booking = await this.prisma.booking.findUnique({
