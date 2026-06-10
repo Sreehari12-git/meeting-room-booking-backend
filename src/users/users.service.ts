@@ -179,7 +179,9 @@ export class UsersService {
                 name: true,
                 status: true,
                 capacity: true,
-                Amenities: true
+                Amenities: true,
+                maintenanceStart: true,
+                maintenanceEnd: true
             }
         })
         this.logger.info({ count: room.length }, 'Rooms fetched');
