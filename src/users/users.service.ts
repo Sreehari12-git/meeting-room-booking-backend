@@ -233,7 +233,9 @@ export class UsersService {
                 name: data.name,
                 status: data.status,
                 capacity: data.capacity,
-                Amenities: data.amenities
+                Amenities: data.amenities,
+                maintenanceStart: data.maintenanceStart ? new Date(data.maintenanceStart) : null,
+                maintenanceEnd: data.maintenanceEnd ? new Date(data.maintenanceEnd):null
             }
         })
 
@@ -242,14 +244,15 @@ export class UsersService {
                 where: {
                     roomId: existingRoom.id,
                     startTime: {
-                        gte: new Date()
+                        gte: new Date(data.maintenanceStart),
+                        lte: new Date(data.maintenanceEnd)
                     }
                 },
                 data: {
                     status: "CANCELED"
                 }
             })
-            this.logger.info({name}, "All upcoming bookings cancelled due to maintenance")
+            this.logger.info({name}, "Bookings cancelled due to maintenance")
         }
 
         this.logger.info({name}, "Room updated")

@@ -38,6 +38,8 @@ model Room {
   capacity Int?
   Amenities String[]
   bookings Booking[]
+  maintenanceStart DateTime?
+  maintenanceEnd DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
