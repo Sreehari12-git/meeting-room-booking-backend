@@ -186,4 +186,67 @@ export class BookingService {
             booking: updatedBooking,
         };
     }
+
+    async getUnavailableSlots(roomId: number, date: string) {
+        this.logger.info({roomId,date}, "Fetching unavailable slots");
+
+        const dayStart = new Date(`${date}T00:00:00+05:30`);
+        const dayEnd   = new Date(`${date}T23:59:59+05:30`);
+
+        const bookings =  await this.prisma.booking.findMany({
+            where: {
+                roomId,
+                status: { in: ["UPCOMING","ONGOING"]},
+                startTime: {lt: dayEnd},
+                endTime: {gt: dayStart}
+            },
+            select: {startTime: true, endTime: true}
+        })
+
+        const room = await this.prisma.room.findUnique({
+            where: {
+                id: roomId
+            },
+            select: {
+                maintenanceStart: true,
+                maintenanceEnd: true,
+                status: true
+            }
+        })
+
+        const blockedRanges: {start: Date; end: Date}[] = [];
+
+        for(const b of bookings) {
+            blockedRanges.push({ start: b.startTime, end:b.endTime});
+        }
+
+        if(room?.status === "MAINTANENCE" && room.maintenanceStart && room.maintenanceEnd) {
+            blockedRanges.push({
+                start: room.maintenanceStart,
+                end: room.maintenanceEnd
+            })
+        }
+
+        const unavailableSlots: string[] = [];
+
+        for(let h = 8; h <= 18; h++) {
+            for(let m = 0; m < 60; m+=30) {
+                if(h === 18 && m > 0) break;
+
+                const slotStart = new Date(`${date}T${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:00+05:30`);
+                const slotEnd   = new Date(slotStart.getTime() + 30 * 60 * 1000);
+
+                const isBlocked = blockedRanges.some(range => slotStart < range.end && slotEnd >  range.start);
+
+                if (isBlocked) {
+                    const ampm = h < 12 ? "AM" : "PM";
+                    const h12  = h > 12 ? h - 12 : h;
+                    const label = `${h12}:${m === 0 ? "00" : m} ${ampm}`;
+                    unavailableSlots.push(label);
+                }
+            }
+        }
+        this.logger.info({ unavailableSlots }, "Unavailable slots fetched");
+        return {unavailableSlots};
+    }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { checkAvailabilityDto } from './dto/check-availability.dto';
 import { BookRoomDto } from './dto/book-room.dto';
@@ -55,6 +55,14 @@ export class BookingController {
   @ApiResponse({status: 404, description: "Bookings are not found"})
   getAllBookings() {
     return this.bookingService.getAllBookings();
+  }
+
+  @Get("unavailable-slots")
+  getUnavailableSlots(@Query('roomId') roomId: string, @Query('date') date: string) {
+    if(!roomId || !date) {
+        throw new BadRequestException("roomId and date are required")
+    }
+    return this.bookingService.getUnavailableSlots(Number(roomId), date);       
   }
 
 }
