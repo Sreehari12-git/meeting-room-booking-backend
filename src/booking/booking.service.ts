@@ -144,7 +144,7 @@ export class BookingService {
             }
         })
         this.logger.info({ count: bookings.length }, "All bookings fetched")
-        return bookings;
+        return bookings;        
     }
 
     async cancelBooking(bookingId: number,userId: number) {

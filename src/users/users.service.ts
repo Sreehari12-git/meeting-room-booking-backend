@@ -159,7 +159,9 @@ export class UsersService {
                 name: data.name,
                 status: data.status?? "AVAILABLE",
                 capacity: data.capacity,
-                Amenities: data.amenities
+                Amenities: data.amenities,
+                maintenanceStart: data.maintenanceStart ? new Date(data.maintenanceStart) : null,
+                maintenanceEnd: data.maintenanceEnd ? new Date(data.maintenanceEnd) : null,
             }
         })
 
