@@ -250,4 +250,29 @@ export class BookingService {
         this.logger.info({ unavailableSlots }, "Unavailable slots fetched");
         return {unavailableSlots};
     }
+
+    async getBookingsByDate(date: string, userId: number) {
+        this.logger.info({date, userId}, "Fetching bookings by date");
+
+        const dayStart = new Date(`${date}T00:00:00+05:30`);
+        const dayEnd   = new Date(`${date}T23:59:59+05:30`);
+
+        const bookings = await this.prisma.booking.findMany({
+            where: {
+                userId,
+                status: { in: ["UPCOMING", "UPCOMING"]},
+                startTime: { gte: dayStart},
+                endTime: {lte: dayEnd}
+            },
+            include: {
+                room: true
+            },
+            orderBy: {
+                startTime: "asc"
+            }
+        });
+        this.logger.info({ count: bookings.length }, "Bookings by date fetched");
+        return bookings;
+    }
 }
+
