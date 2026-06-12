@@ -91,6 +91,7 @@ export class BookingService {
                 roomId: dto.roomId,
                 startTime: new Date(dto.startTime),
                 endTime: new Date(dto.endTime),
+                meetingDescription: dto.meetingDescription,
                 status: "UPCOMING"
             }
         })
