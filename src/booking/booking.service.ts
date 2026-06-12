@@ -265,7 +265,8 @@ export class BookingService {
                 endTime: {lte: dayEnd}
             },
             include: {
-                room: true
+                room: true,
+                user: true
             },
             orderBy: {
                 startTime: "asc"
