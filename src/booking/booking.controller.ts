@@ -68,10 +68,10 @@ export class BookingController {
   @Get("by-date") @Roles(Role.EMPLOYEE)
   @ApiOperation({ summary: 'Get bookings by date' })
   @ApiResponse({ status: 200, description: 'Bookings fetched successfully' })
-  getBookingsByDate(@Query('date') date: string, @Req() req: Request) {
+  getBookingsByDate(@Query('date') date: string, @Query('roomId') roomId: string) {
     if(!date) {
         throw new BadRequestException("Date is required")
     }
-    return this.bookingService.getBookingsByDate(date, req["user"].id);
+    return this.bookingService.getBookingsByDate(date, Number(roomId));
   }
 }
