@@ -266,7 +266,11 @@ export class BookingService {
             },
             include: {
                 room: true,
-                user: true
+                user: {
+                    select: {
+                        name: true
+                    }
+                }
             },
             orderBy: {
                 startTime: "asc"
