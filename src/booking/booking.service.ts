@@ -256,12 +256,14 @@ export class BookingService {
 
         const dayStart = new Date(`${date}T00:00:00+05:30`);
         const dayEnd   = new Date(`${date}T23:59:59+05:30`);
+        const now = Date();
 
         const bookings = await this.prisma.booking.findMany({
             where: {
                 roomId,
                 status: { in: ["UPCOMING", "UPCOMING"]},
                 startTime: { gte: dayStart, lte: dayEnd},
+                endTime: { gt: now}
             },
             include: {
                 room: true,
