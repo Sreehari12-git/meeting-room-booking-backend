@@ -277,8 +277,12 @@ export class BookingService {
                 startTime: "asc"
             }
         });
+
+        const updatedBookings = bookings.map(booking => ({
+            ...booking, status: now >= new Date(booking.startTime) && now <= new Date(booking.endTime) ? "ONGOING" : "UPCOMING"
+        }))
         this.logger.info({ count: bookings.length }, "Bookings by date fetched");
-        return bookings;
+        return updatedBookings;
     }
 }
 
